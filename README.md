@@ -1,71 +1,103 @@
-# terminal-guardian README
+# Terminal Guardian
 
-This is the README for your extension "terminal-guardian". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Every developer has a story. A wrong command in a rushed moment, a misread flag, a terminal that didn't ask twice. The project was gone before the mistake registered.
+Modern development moves fast. Commands get longer, workflows get more complex, and the terminal remains completely silent about what it's about to do to your work.
+Terminal Guardian adds a voice to that silence.
 
 ---
 
-## Following extension guidelines
+## What it does
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+When you run a potentially destructive terminal command, Terminal Guardian intercepts it **before execution** and shows you:
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+- Exactly what the command will do in plain English
+- How to recover if you have already run it by mistake
+- A safer alternative that achieves the same goal with less risk
 
-## Working with Markdown
+You then choose — run it anyway, or cancel. The command does not execute until you decide.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+---
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+## Commands it protects against
 
-## For more information
+• git reset --hard
+Risk: Permanently discards all uncommitted changes.
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+• git clean -f
+Risk: Deletes all untracked files with no recovery path.
 
-**Enjoy!**
+• git push --force
+Risk: Overwrites remote branch and can break teammates' work.
+
+• git checkout .
+Risk: Silently discards all working directory changes.
+
+• git branch -D
+Risk: Force deletes a branch even if work is unmerged.
+
+• git stash drop / git stash clear
+Risk: Permanently removes stashed changes.
+
+• git filter-branch
+Risk: Rewrites commit history permanently.
+
+• rm -rf
+Risk: Deletes files and folders with no Recycle Bin recovery.
+
+• rd /s / del /f
+Risk: Force deletes files and folders on Windows.
+
+• docker system prune
+Risk: Removes containers, images, networks, and build cache.
+
+• terraform destroy
+Risk: Deletes all infrastructure managed by Terraform.
+
+• kubectl delete namespace
+Risk: Deletes a Kubernetes namespace and all resources inside it.
+
+• DROP DATABASE / DROP TABLE
+Risk: Permanently deletes a database or table and all its data.
+
+• TRUNCATE TABLE
+Risk: Instantly removes all rows from a table.
+
+• aws s3 rm --recursive
+Risk: Permanently deletes all objects in an S3 bucket or path.
+
+---
+
+## Setup
+
+**1. Install the extension** from the VS Code Marketplace.
+
+**2. Open a PowerShell terminal** in VS Code and run:
+
+```powershell
+. "C:\path\to\your\guardian.ps1"
+```
+
+**3. To make it permanent** — run this once so it loads automatically every time your terminal opens:
+
+```powershell
+New-Item -ItemType Directory -Path (Split-Path $PROFILE) -Force
+Add-Content $PROFILE ". `"C:\path\to\your\guardian.ps1`""
+```
+
+**4. Restart your terminal.** You should see:
+Terminal Guardian active [OK]
+
+That confirms the hook is running. From this point every dangerous command will be intercepted automatically.
+
+---
+
+## How it works
+
+Terminal Guardian hooks into PowerShell's PSReadLine layer — the same layer that handles your terminal input. When you press Enter, the hook reads the command before the shell receives it. If the command matches a known destructive pattern, execution is paused and the warning is shown. If you type `run` and press Enter, the command proceeds. If you press Enter alone, it is cancelled.
+Non-dangerous commands pass through instantly with zero delay.
+
+---
+
+## Contributing
+
+Found a command that should be on the list? Open an issue or pull request on GitHub. The command list lives in `src/guardian.ps1`and is straightforward to extend.
