@@ -71,23 +71,17 @@ Risk: Permanently deletes all objects in an S3 bucket or path.
 
 **1. Install the extension** from the VS Code Marketplace.
 
-**2. Open a PowerShell terminal** in VS Code and run:
+**2. A prompt will appear** asking to set up terminal protection.
+Click **Yes, set it up**.
 
-```powershell
-. "C:\path\to\your\guardian.ps1"
-```
-
-**3. To make it permanent** — run this once so it loads automatically every time your terminal opens:
-
-```powershell
-New-Item -ItemType Directory -Path (Split-Path $PROFILE) -Force
-Add-Content $PROFILE ". `"C:\path\to\your\guardian.ps1`""
-```
-
-**4. Restart your terminal.** You should see:
+**3. Restart your terminal** when prompted. You will see:
 Terminal Guardian active [OK]
 
-That confirms the hook is running. From this point every dangerous command will be intercepted automatically.
+That is it. No manual paths, no configuration needed.
+
+If you missed the prompt, open the Command Palette
+(`Ctrl+Shift+P`) and run:
+Terminal Guardian: Set up terminal protection
 
 ---
 
