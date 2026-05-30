@@ -2,7 +2,7 @@
   "name": "terminal-guardian",
   "displayName": "Terminal Guardian",
   "description": "Warns developers before destructive terminal commands execute — git reset, rm -rf, DROP DATABASE and more.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "Shrishtii",
   "engines": {
     "vscode": "^1.93.0"
